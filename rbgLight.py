@@ -2,7 +2,7 @@
 import RPi.GPIO as GPIO
 import time
 import warnings
-warnings.fiterwarnings('ignore')
+warnings.filterwarnings('ignore')
 
 colors = [0xFF0000, 0x00FF00, 0x0000FF]
 pins = {'pin_R':11, 'pin_G':13, 'pin_B':15}  # pins is a dict
