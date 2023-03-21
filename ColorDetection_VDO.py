@@ -40,6 +40,7 @@ while True:
         cX = int(M["m10"] / M["m00"])
         cY = int(M["m01"] / M["m00"])
         cv2.circle(frameHSV, (cX, cY), 7, (255, 255, 255), -1)
+        print((cX,cY))
         
     # height, width, _ = orange.shape
     # min_x, min_y = 0, 0
