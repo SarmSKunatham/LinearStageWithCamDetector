@@ -1,7 +1,6 @@
 from gpiozero import Button, LED, PWMLED
 from time import sleep
 import threading
-# from rbgLight import setColor, stop_color
 import warnings
 warnings.filterwarnings('ignore')
 
@@ -55,21 +54,27 @@ def LM_right_pressed():
         return True
     return False
 def move_slider_left():
+    STEP1.blink(on_time=0.001, off_time=0.001, fade_in_time=0, fade_out_time=0, n=None, background=True) # Stepper motor pwm pulse
     DIR1.on()
     print('Slider moving left')
 def move_slider_right():
+    STEP1.blink(on_time=0.001, off_time=0.001, fade_in_time=0, fade_out_time=0, n=None, background=True) # Stepper motor pwm pulse
     DIR1.off()
     print('Slider moving right')
 def tilt_camera_up():
+    STEP2.blink(on_time=0.001, off_time=0.001, fade_in_time=0, fade_out_time=0, n=None, background=True) # Stepper motor pwm pulse
     DIR2.on()
-    EN2.on()
     print('Camera tilting up')
-    sleep(1)
 def tilt_camera_down():
+    STEP2.blink(on_time=0.001, off_time=0.001, fade_in_time=0, fade_out_time=0, n=None, background=True) # Stepper motor pwm pulse
     DIR2.off()
-    EN2.off()
     print('Camera tilting down')
-    sleep(1)
+def stop_slider():
+    STEP1.off()
+    print('Slider stopped')
+def stop_camera():
+    STEP2.off()
+    print('Camera stopped')
 def move_slider_thread():
     try:
         while True:
@@ -91,26 +96,16 @@ def tilt_camera_thread():
         EN1.off()
         EN2.off()
         print('Stepper motors disabled')
-# def change_color_thread():
-#     try:
-#         while True:
-#             for color in colors:
-#                 setColor(color)
-#                 sleep(3)
-#     except KeyboardInterrupt:
-#         print('KeyboardInterrupt')
-#         stop_color()
-#         print('RGB LED turned off')
+
 # ===============================
+
 print('Setup complete!')
 
-if __name__ == '__main__':
-    move_slider_thread = threading.Thread(target=move_slider_thread)
-    tilt_camera_thread = threading.Thread(target=tilt_camera_thread)
-#     change_color_thread = threading.Thread(target=change_color_thread)
-    move_slider_thread.start()
-    tilt_camera_thread.start()
-#     change_color_thread.start()
+# if __name__ == '__main__':
+#     move_slider_thread = threading.Thread(target=move_slider_thread)
+#     tilt_camera_thread = threading.Thread(target=tilt_camera_thread)
+#     move_slider_thread.start()
+#     tilt_camera_thread.start()
 
 
 
