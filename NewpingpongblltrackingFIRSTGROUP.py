@@ -3,8 +3,6 @@ import numpy as np
 import argparse
 import imutils
 import cv2
-from picamera.array import PiRGBArray
-from picamera import PiCamera
 import time
 from main import stop_slider, stop_camera, move_slider_left, move_slider_right, tilt_camera_up, tilt_camera_down
 # initialize the camera and grab a reference to the raw camera capture
@@ -18,8 +16,8 @@ ap.add_argument("-b", "--buffer", type=int, default=64,
 	help="max buffer size")
 args = vars(ap.parse_args())
 
-greenLower = (10, 100, 150)
-greenUpper = (30, 255, 255)
+orangeLower = (10, 100, 150)
+orangeUpper = (30, 255, 255)
 
 pts = deque(maxlen=args["buffer"])
 
@@ -40,19 +38,18 @@ while True:
 	if args.get("video") and not grabbed:
 		break
 
-	# resize the frame, blur it, and convert it to the HSV
-	# color space
-	#frame = imutils.resize(frame, width=1000)
-	# blurred = cv2.GaussianBlur(frame, (11, 11), 0)
+	# convert it to the HSV color space
+	frame = cv2.GaussianBlur(frame, (11, 11), 0)
 	hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-	# construct a mask for the color "green", then perform
+	
+	# construct a mask for the color "orange", then perform
 	# a series of dilations and erosions to remove any small
 	# blobs left in the mask
-	mask = cv2.inRange(hsv, greenLower, greenUpper)
-	cv2.imshow('masdk', mask)
+	mask = cv2.inRange(hsv, orangeLower, orangeUpper)
+# 	cv2.imshow('masdk', mask)
 	mask = cv2.erode(mask, None, iterations=2)
 	mask = cv2.dilate(mask, None, iterations=2)
-	cv2.imshow('mask', mask)
+# 	cv2.imshow('mask', mask)
 	# find contours in the mask and initialize the current
 	# (x, y) center of the ball
 	cnts = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL,
