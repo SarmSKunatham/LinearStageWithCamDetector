@@ -8,17 +8,8 @@ from picamera import PiCamera
 import time
 from main import stop_slider, stop_camera, move_slider_left, move_slider_right, tilt_camera_up, tilt_camera_down
 # initialize the camera and grab a reference to the raw camera capture
-# camera = PiCamera()
-# rawCapture = PiRGBArray(camera)
-# # allow the camera to warmup
-# time.sleep(0.1)
-# # grab an image from the camera
-# camera.capture(rawCapture, format="bgr")
-# image = rawCapture.array
-# # display the image on screen and wait for a keypress
-# cv2.imshow("Image", image)
-# cv2.waitKey(0)
 cam=cv2.VideoCapture(0)
+
 # construct the argument parse and parse the arguments
 ap = argparse.ArgumentParser()
 ap.add_argument("-v", "--video",
@@ -27,25 +18,11 @@ ap.add_argument("-b", "--buffer", type=int, default=64,
 	help="max buffer size")
 args = vars(ap.parse_args())
 
-# define the lower and upper boundaries of the "yellow"
-# ball in the HSV color space, then initialize the
-# list of tracked pointsq
-# greenLower = (29, 86, 6) # the lower and upper boundaries of the "green"
-# greenUpper = (64, 255, 255) 
 greenLower = (10, 100, 150)
 greenUpper = (30, 255, 255)
-# greenLower = (0, 0, 200)
-# greenUpper = (100, 255, 255)
+
 pts = deque(maxlen=args["buffer"])
 
-# if a video path was not supplied, grab the reference
-# to the webcamq
-# if not args.get("video", False):
-# 	camera = cv2.VideoCapture(0)
-#
-# # otherwise, grab a reference to the video file
-# else:
-namevideo = "Yellow_Ball_with_man.mp4"
 if not cam.isOpened():
     print ("Error open video %s" %str(cam))
     exit()
@@ -101,32 +78,39 @@ while True:
 
 	#update the points queue
 	pts.appendleft(center)
-
+	cv2.line(frame, (0,int(0.7*hsv.shape[0])), (hsv.shape[1],int(0.7*hsv.shape[0])), (0, 0, 255), thickness=3)
+	cv2.line(frame, (0,int(0.3*hsv.shape[0])), (hsv.shape[1],int(0.3*hsv.shape[0])), (0, 0, 255), thickness=3)
+	cv2.line(frame, (int(0.7*hsv.shape[1]),0), (int(0.7*hsv.shape[1]), hsv.shape[0]), (0, 0, 255), thickness=3)
+	cv2.line(frame, (int(0.3*hsv.shape[1]),0), (int(0.3*hsv.shape[1]), hsv.shape[0]), (0, 0, 255), thickness=3)
+	
+    
 	if center is not None:
         # Right
-		if center[0]> 0.6*hsv.shape[1]:
+		if center[0]> 0.7*hsv.shape[1]:
 			cv2.putText(frame, "Right", (300, 300), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (50, 170, 50), 2)
 			move_slider_right()
 		# Left
-		elif center[0]< 0.4*hsv.shape[1]:
+		elif center[0]< 0.3*hsv.shape[1]:
 			cv2.putText(frame, "Left", (300, 300), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (50, 170, 50), 2)
 			move_slider_left()
 		else:
 			stop_slider()
 		# Down
-		if center[1]> 0.6*hsv.shape[0]:
+		if center[1]> 0.7*hsv.shape[0]:
 			cv2.putText(frame, "Tilt down", (400, 300), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (50, 170, 50), 2)
 			tilt_camera_down()
 		# Up
-		elif center[1]< 0.4*hsv.shape[0]:
+		elif center[1]< 0.3*hsv.shape[0]:
 			cv2.putText(frame, "Tilt up", (400, 300), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (50, 170, 50), 2)
 			tilt_camera_up()
 		else:
 			stop_camera()
+			cv2.putText(frame, "Stop", (400, 300), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (50, 170, 50), 2)
 	else:
         # stop
 		stop_slider()
 		stop_camera()
+		cv2.putText(frame, "Stop", (400, 300), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (50, 170, 50), 2)
 
 
 	#loop over the set of tracked points

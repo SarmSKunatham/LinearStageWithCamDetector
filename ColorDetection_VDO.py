@@ -34,14 +34,7 @@ while True:
     myMask=cv2.inRange(frameHSV, lowerBound, upperBound)
     orange=cv2.bitwise_and(img,img,mask=myMask)
     contours, hierarchy = cv2.findContours(myMask, 1, 2)
-    for c in contours:
-        # compute the center of the contour
-        M = cv2.moments(c)
-        cX = int(M["m10"] / M["m00"])
-        cY = int(M["m01"] / M["m00"])
-        cv2.circle(frameHSV, (cX, cY), 7, (255, 255, 255), -1)
-        print((cX,cY))
-        
+    cv2.drawContours(img, contours, -1, (255, 0, 0), 2)
     # height, width, _ = orange.shape
     # min_x, min_y = 0, 0
     # max_x = max_y = 0
